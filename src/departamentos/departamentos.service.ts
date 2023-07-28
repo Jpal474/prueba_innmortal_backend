@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDepartamentoDto } from './dto/create-depatarmento.dto';
-import { Supermercados } from 'src/supermercados/supermercados/supermercados.entity';
 
 @Injectable()
 export class DepartamentosService {
@@ -38,7 +37,8 @@ export class DepartamentosService {
   }
 
   async getDepartamentosBySuperId(id:string): Promise<Departamentos[]> {
-    const found = await this.departamentosRepository.find({
+    try{
+      const found = await this.departamentosRepository.find({
       relations: ['supermercado'],
       where: { supermercado:{id: id } },
     });
@@ -49,6 +49,9 @@ export class DepartamentosService {
     }
     console.log(found);
     return found;
+  }catch(error){
+    console.log(error)
+  }
     
   }
 

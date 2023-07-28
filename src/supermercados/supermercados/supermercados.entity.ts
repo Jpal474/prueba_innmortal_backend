@@ -1,9 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { User } from 'src/auth/user.entity';
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import {Exclude} from 'class-transformer'
 import { Departamentos } from 'src/departamentos/departamentos.entity';
-import { Trabajadores } from 'src/trabajadores/trabajadores.entity';
 
 @Entity()
 export class Supermercados {

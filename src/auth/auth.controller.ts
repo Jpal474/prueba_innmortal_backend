@@ -12,7 +12,6 @@ import { AuthService } from './auth.service';
 import { User } from './user.entity';
 import { CreateEncargadoDto } from './dto/create-encargado.dto';
 import { UpdateEncargadoDto } from './dto/update-encargado.dto';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {

@@ -2,7 +2,6 @@ import { Body, Controller, Post, Get, Param, Delete } from '@nestjs/common';
 import { DepartamentosService } from './departamentos.service';
 import { Departamentos } from './departamentos.entity';
 import { CreateDepartamentoDto } from './dto/create-depatarmento.dto';
-import { Supermercados } from 'src/supermercados/supermercados/supermercados.entity';
 import { DeleteResult } from 'typeorm';
 
 @Controller('departamentos')
@@ -28,9 +27,13 @@ export class DepartamentosController {
   createDepartamento(
     @Body() createDepartamentoDto: CreateDepartamentoDto,
   ): Promise<Departamentos> {
-    console.log(createDepartamentoDto.nombre);
-    console.log(createDepartamentoDto.supermercado);
-    return this.departamentosService.createDepartamento(createDepartamentoDto);
+    try {
+      return this.departamentosService.createDepartamento(
+        createDepartamentoDto,
+      );
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   @Delete('/:id')
