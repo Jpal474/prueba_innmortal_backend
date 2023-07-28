@@ -40,7 +40,6 @@ export class Supermercados {
   telefono: string;
 
   @OneToOne(() => User, (encargado) => encargado.supermercado) // specify inverse side as a second parameter
-  @Exclude({toPlainOnly:true})
   encargado?: User
 
   @OneToMany(() => Departamentos, (departamento) => departamento.supermercado) // specify inverse side as a second parameter

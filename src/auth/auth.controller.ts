@@ -35,6 +35,11 @@ export class AuthController {
     return this.userService.getEncargadoById(id);
   }
 
+  @Get('encargado/:id')
+  getEncargadoBySuperId(@Param('id') id: string): Promise<User> {
+    return this.userService.getEncargadoBySuperId(id);
+  }
+
   // @Get('/:correo')
   // getEncargadoByMail(@Param('correo') correo: string): Promise<User> {
   //   return this.userService.getEncargadoByMail(correo);
@@ -44,6 +49,7 @@ export class AuthController {
   createEncargado(
     @Body() createEncargadoDto: CreateEncargadoDto,
   ): Promise<User> {
+    console.log(`Encargado ${createEncargadoDto}`);
     return this.userService.createEncargado(createEncargadoDto);
   }
 

@@ -1,21 +1,17 @@
 import {
   ConflictException,
-  Inject,
   Injectable,
   NotAcceptableException,
   NotFoundException,
   UnauthorizedException,
-  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { JwtService } from '@nestjs/jwt';
 import { AuthCredentialsDto } from './dto/auth-credential.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtPayload } from './jwt-payload.interface';
-import { Supermercados } from 'src/supermercados/supermercados/supermercados.entity';
 import { CreateEncargadoDto } from './dto/create-encargado.dto';
 import { UpdateEncargadoDto } from './dto/update-encargado.dto';
 
@@ -44,13 +40,15 @@ export class AuthService {
     }
   }
   async getEncargados(tipo: string): Promise<User[]> {
-    const query = this.userRepository.createQueryBuilder('user');
-    query.andWhere('user.tipo = :tipo', { tipo });
-    const encargados = await query.getMany();
+    const encargados = this.userRepository.find({
+      relations: ['supermercado'],
+      where: { tipo: tipo },
+    });
     return encargados;
   }
 
-  async getEncargadoById(id: string): Promise<any> {
+  async getEncargadoById(id: string): Promise<User> {
+    //obtengo el encargado con el id del supermercado para después buscar el supermercado
     const found = await this.userRepository.find({
       relations: ['supermercado'],
       where: { id: id },
@@ -62,12 +60,25 @@ export class AuthService {
     }
     return found[0];
   }
+
+  async getEncargadoBySuperId(id: string): Promise<User> {
+    const found = await this.userRepository.findOne({
+      relations: ['supermercado'],
+      where: { supermercado: { id: id } },
+    });
+    if (!found) {
+      throw new NotFoundException(
+        `Encargado para el Supermercado "${id}" no ha sido encontrado`,
+      );
+    }
+    return found;
+  }
+
   async createEncargado(createEncargadoDto: CreateEncargadoDto): Promise<User> {
     const en = createEncargadoDto;
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(en.contraseña, salt);
     en.contraseña = hashedPassword;
-    en.tipo = 'encargado';
     const encargado = this.userRepository.create(en);
     try {
       await this.userRepository.save(encargado);

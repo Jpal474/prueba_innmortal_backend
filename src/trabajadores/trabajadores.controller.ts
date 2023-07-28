@@ -34,14 +34,14 @@ export class TrabajadoresController {
   // }
 
   @Post()
-  createSupermercado(
+  createTrabajador(
     @Body() createSupermercadoDto: CreateTrabajadorDto,
   ): Promise<Trabajadores> {
     return this.trabajadoresService.createTrabajador(createSupermercadoDto);
   }
 
   @Patch('/:id/editar')
-  updateSupermercado(
+  updateTrabajador(
     @Param('id') id: string,
     @Body() updateTrabajadorDto: UpdateTrabajadorDto,
   ): Promise<Trabajadores> {

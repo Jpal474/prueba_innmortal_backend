@@ -3,6 +3,7 @@ import { DepartamentosService } from './departamentos.service';
 import { Departamentos } from './departamentos.entity';
 import { CreateDepartamentoDto } from './dto/create-depatarmento.dto';
 import { Supermercados } from 'src/supermercados/supermercados/supermercados.entity';
+import { DeleteResult } from 'typeorm';
 
 @Controller('departamentos')
 export class DepartamentosController {
@@ -33,7 +34,7 @@ export class DepartamentosController {
   }
 
   @Delete('/:id')
-  deleteTaskById(@Param('id') id: string): void {
-    this.departamentosService.deleteDepartamento(id);
+  deleteTaskById(@Param('id') id: string): Promise<DeleteResult> {
+    return this.departamentosService.deleteDepartamento(id);
   }
 }

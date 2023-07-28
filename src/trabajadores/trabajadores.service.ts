@@ -36,10 +36,16 @@ export class TrabajadoresService {
   }
 
   async getTrabajador(id:string):Promise<Trabajadores>{
-    const found = await this.trabajadoresRepository.findOneBy({id:id});
-    if(!found){
-      throw new NotFoundException(`Encargado con el ID "${id}" no ha sido encontrado`)
+    const found = await this.trabajadoresRepository.findOne({
+      relations: ['departamento'],
+      where:{id: id } ,
+    });
+    if (!found ) {
+      throw new NotFoundException(
+        `Trabajadores para el Departamento "${id}" no han sido encontrados`,
+      );
     }
+
     return found;
   }
 

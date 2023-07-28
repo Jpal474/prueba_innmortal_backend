@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Departamentos } from './departamentos.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDepartamentoDto } from './dto/create-depatarmento.dto';
 import { Supermercados } from 'src/supermercados/supermercados/supermercados.entity';
@@ -63,11 +63,12 @@ console.log(error)
   }
   }
 
-async deleteDepartamento(id:string):Promise<void>{
+async deleteDepartamento(id:string):Promise<DeleteResult>{
   const result = await this.departamentosRepository.delete(id);
   if (result.affected === 0) {
     throw new NotFoundException(`Departamento con el id: "${id}" no ha sido encontrado`);
   }
+  return result
 }
 
 
