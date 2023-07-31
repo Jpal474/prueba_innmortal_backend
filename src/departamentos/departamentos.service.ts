@@ -70,8 +70,9 @@ async deleteDepartamento(id:string):Promise<DeleteResult>{
   const result = await this.departamentosRepository.delete(id);
   if (result.affected === 0) {
     throw new NotFoundException(`Departamento con el id: "${id}" no ha sido encontrado`);
-  }
+  }else{
   return result
+}
 }
 
 

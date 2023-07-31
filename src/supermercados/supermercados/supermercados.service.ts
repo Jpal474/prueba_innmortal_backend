@@ -2,7 +2,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Supermercados } from './supermercados.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateDescription } from 'typeorm';
+import { Repository} from 'typeorm';
 import { CreateSupermercadoDto } from './dto/createSupermercado.dto';
 import { User } from 'src/auth/user.entity';
 
@@ -42,7 +42,8 @@ export class SupermercadosService {
   }
 
   async createSupermercado(createSupermercadoDto: CreateSupermercadoDto, encargado:User): Promise<Supermercados> {
-    console.log('encargado recibido')
+    try{
+      console.log('encargado recibido')
     console.log(encargado)
     createSupermercadoDto.encargado=encargado
     console.log('encargado despues de insert')
@@ -51,75 +52,15 @@ export class SupermercadosService {
     console.log(supermercado.encargado);
     await this.supermercadosRepository.save(supermercado);
     return supermercado;
+  }catch(error){
+    console.log(error)
   }
-
-  // async updateSupermercado(id:string,updateSupermercadoDto:UpdateSu): Promise<Supermercados>{
-  //   this.supermercado = await this.getSupermercado(id);
-  //   this.supermercado=updateSupermercadoDto;
-
-  //   return this.supermercado
-  // }
+  }
 
   async deleteSupermercado(id:string){
     const result = await this.supermercadosRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Supermercado with "${id}" not found`);
     }
+} 
 }
-
-
-}
-
-
-
-//   async getTaskById(id: string): Promise<Supermercados> {
-//     const found = await this.supermercadosRepository.findOneBy({id:id});
-//     if (!found) {
-//       throw new NotFoundException(`Supermercado with ID "${id}" not found`);
-//     }
-//     return found;
-//   }
-
-//   async createSupermercado(
-//     createSupermercadoDto: CreateSupermercadoDto,
-//   ): Promise<Supermercados> {
-//     const {
-//       nombre,
-//       calle,
-//       numero,
-//       colonia,
-//       estado,
-//       ciudad,
-//       codigopostal,
-//       razonsocial,
-//       correo,
-//     } = createSupermercadoDto;
-//     const supermercado = this.supermercadosRepository.create({
-//       nombre,
-//       calle,
-//       numero,
-//       colonia,
-//       estado,
-//       ciudad,
-//       codigopostal,
-//       razonsocial,
-//       correo,
-//     });
-
-//     await this.supermercadosRepository.save(supermercado);
-//     return supermercado;
-//   }
-
-// //   updateSupermercado(){
-
-// //   }
-
-// async deleteSupermercado(id:string){
-//     const result = await this.supermercadosRepository.delete(id);
-//     if (result.affected === 0) {
-//       throw new NotFoundException(`Supermercado with "${id}" not found`);
-//     }
-// }
-
-
-// }

@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { Trabajadores } from './trabajadores.entity';
 import { CreateTrabajadorDto } from './dto/create-trabajador.dto';
 import { UpdateTrabajadorDto } from './dto/update-trabajador.dto';
@@ -49,20 +49,6 @@ export class TrabajadoresService {
     return found;
   }
 
-  // async getTrabajadorBySupermercado(id:string):Promise<Trabajadores[]>{
-  //   const found = await this.trabajadoresRepository.find({
-  //     relations: ['departamento'],
-  //     where: { supermercado:{id: id } },
-  //   });
-  //   if (!found ) {
-  //     throw new NotFoundException(
-  //       `Trabajadores para el Departamento "${id}" no han sido encontrados`,
-  //     );
-  //   }
-
-  //   return found;
-  // }
-
   async createTrabajador(createTrabajadorDto: CreateTrabajadorDto): Promise<Trabajadores> {
     const trabajador = this.trabajadoresRepository.create(createTrabajadorDto);
     await this.trabajadoresRepository.save(trabajador);
@@ -76,10 +62,13 @@ export class TrabajadoresService {
     return this.trabajador
   }
 
-  async deleteTrabajador(id:string){
+  async deleteTrabajador(id:string): Promise<DeleteResult>{
     const result = await this.trabajadoresRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Trabajador with "${id}" not found`);
+    }
+    else{
+      return result;
     }
 }
 

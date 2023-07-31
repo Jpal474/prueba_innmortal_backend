@@ -12,6 +12,7 @@ import { AuthService } from './auth.service';
 import { User } from './user.entity';
 import { CreateEncargadoDto } from './dto/create-encargado.dto';
 import { UpdateEncargadoDto } from './dto/update-encargado.dto';
+import { DeleteResult } from 'typeorm';
 
 @Controller('auth')
 export class AuthController {
@@ -39,22 +40,12 @@ export class AuthController {
     return this.userService.getEncargadoBySuperId(id);
   }
 
-  // @Get('/:correo')
-  // getEncargadoByMail(@Param('correo') correo: string): Promise<User> {
-  //   return this.userService.getEncargadoByMail(correo);
-  // }
-
   @Post()
   createEncargado(
     @Body() createEncargadoDto: CreateEncargadoDto,
   ): Promise<User> {
     console.log(`Encargado ${createEncargadoDto}`);
     return this.userService.createEncargado(createEncargadoDto);
-  }
-
-  @Delete('/:id')
-  deleteTaskById(@Param('id') id: string): void {
-    this.userService.deleteEncargadoById(id);
   }
 
   @Patch('/:id/editar')
