@@ -42,7 +42,7 @@ export class TrabajadoresService {
     });
     if (!found ) {
       throw new NotFoundException(
-        `Trabajadores para el Departamento "${id}" no han sido encontrados`,
+        `Trabajadores con el "${id}" no han sido encontrados`,
       );
     }
 
@@ -79,7 +79,7 @@ export class TrabajadoresService {
   async deleteTrabajador(id:string){
     const result = await this.trabajadoresRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException(`Supermercado with "${id}" not found`);
+      throw new NotFoundException(`Trabajador with "${id}" not found`);
     }
 }
 
