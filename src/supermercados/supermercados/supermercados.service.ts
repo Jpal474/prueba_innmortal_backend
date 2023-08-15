@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Supermercados } from './supermercados.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository} from 'typeorm';
@@ -29,6 +29,9 @@ export class SupermercadosService {
   async getSupermercados(): Promise<Supermercados[]> {
     const query=this.supermercadosRepository.createQueryBuilder('supermercados');
     const supermercados = await query.getMany();
+    if(!supermercados){
+      throw new NotFoundException(`No Se Han Encontrado Supermercados`)
+    }
     return supermercados;
   }
 
@@ -43,17 +46,16 @@ export class SupermercadosService {
 
   async createSupermercado(createSupermercadoDto: CreateSupermercadoDto, encargado:User): Promise<Supermercados> {
     try{
-      console.log('encargado recibido')
-    console.log(encargado)
     createSupermercadoDto.encargado=encargado
-    console.log('encargado despues de insert')
-    console.log(createSupermercadoDto.encargado)
     const supermercado = this.supermercadosRepository.create(createSupermercadoDto);
-    console.log(supermercado.encargado);
     await this.supermercadosRepository.save(supermercado);
     return supermercado;
   }catch(error){
-    console.log(error)
+     if (error.code === '23502') {
+      throw new BadRequestException(
+        'Error: Datos Invalidos Para El Supermercado',
+      );
+    }
   }
   }
 

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { IsDateString, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { EncargadoGenero } from '../encargado-models/encargado-genero-enum';
 
 export class UpdateEncargadoDto {

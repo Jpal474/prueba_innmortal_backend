@@ -1,7 +1,7 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
-  NotAcceptableException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -15,7 +15,7 @@ import { JwtPayload } from './jwt-payload.interface';
 import { CreateEncargadoDto } from './dto/create-encargado.dto';
 import { UpdateEncargadoDto } from './dto/update-encargado.dto';
 import { EncargadoGenero } from './encargado-models/encargado-genero-enum';
-
+import * as sharp from 'sharp';
 @Injectable()
 export class AuthService {
   encargado: User = {
@@ -49,7 +49,9 @@ export class AuthService {
       const accessToken: string = await this.jwtService.sign(payload);
       return { accessToken };
     } else {
-      throw new UnauthorizedException('Please check your login credentials');
+      throw new UnauthorizedException(
+        'Correo o contraseña no válidos, revise sus credenciales',
+      );
     }
   }
   async getEncargados(tipo: string): Promise<User[]> {
@@ -57,6 +59,10 @@ export class AuthService {
       relations: ['supermercado'],
       where: { tipo: tipo },
     });
+    if ((await encargados).length === 0) {
+      throw new NotFoundException(`No Hay Encargados Para Mostrar`);
+    }
+
     return encargados;
   }
 
@@ -95,11 +101,17 @@ export class AuthService {
     const encargado = this.userRepository.create(en);
     try {
       await this.userRepository.save(encargado);
+      console.log(encargado);
       return encargado;
     } catch (error) {
+      console.log(error);
       if (error.code === '23505') {
         throw new ConflictException(
           'El correo que ha escrito ya se encuentra en uso',
+        );
+      } else if (error.code === '23502') {
+        throw new BadRequestException(
+          'Error: Datos Invalidos Para El Encargado',
         );
       }
     }
@@ -129,5 +141,37 @@ export class AuthService {
     }
     await this.userRepository.save(this.encargado);
     return this.encargado;
+  }
+
+  async compressImage(
+    inputBuffer: Buffer,
+    outputQuality: number,
+    id: string,
+  ): Promise<User> {
+    this.encargado = await this.getEncargadoById(id);
+    try {
+      const compressedImageBuffer = await sharp(inputBuffer)
+        .jpeg({ quality: outputQuality }) // Adjust quality as needed
+        .toBuffer();
+
+      this.encargado.imagen = compressedImageBuffer.toString('base64');
+      // const dataImagePrefix = `data:image/png;base64,`;
+      // this.encargado.imagen = dataImagePrefix + this.encargado.imagen;
+      console.log(this.encargado);
+      await this.userRepository.save(this.encargado);
+      return this.encargado;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async convertFileToBuffer(file: Express.Multer.File): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const chunks: any[] = [];
+      file.stream
+        .on('data', (chunk) => chunks.push(chunk))
+        .on('end', () => resolve(Buffer.concat(chunks)))
+        .on('error', (error) => reject(error));
+    });
   }
 }

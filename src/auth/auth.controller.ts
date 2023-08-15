@@ -1,10 +1,10 @@
 import {
   Controller,
-  Delete,
   Get,
   Param,
   Patch,
-  UseGuards,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthCredentialsDto } from './dto/auth-credential.dto';
 import { Post, Body } from '@nestjs/common';
@@ -12,8 +12,7 @@ import { AuthService } from './auth.service';
 import { User } from './user.entity';
 import { CreateEncargadoDto } from './dto/create-encargado.dto';
 import { UpdateEncargadoDto } from './dto/update-encargado.dto';
-import { DeleteResult } from 'typeorm';
-
+import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('auth')
 export class AuthController {
   constructor(private userService: AuthService) {}
@@ -44,7 +43,6 @@ export class AuthController {
   createEncargado(
     @Body() createEncargadoDto: CreateEncargadoDto,
   ): Promise<User> {
-    console.log(`Encargado ${createEncargadoDto}`);
     return this.userService.createEncargado(createEncargadoDto);
   }
 
@@ -54,5 +52,21 @@ export class AuthController {
     @Body() updateEncargadoDto: UpdateEncargadoDto,
   ): Promise<User> {
     return this.userService.updateEncargado(id, updateEncargadoDto);
+  }
+
+  @Post('upload/:id')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadImage(
+    @UploadedFile() image: Express.Multer.File,
+    @Param('id') id: string,
+  ): Promise<User> {
+    console.log(image);
+    const compressedImageBuffer = await this.userService.compressImage(
+      image.buffer,
+      100,
+      id,
+    ); // Adjust quality as needed
+    // Now you can save, send, or further process the compressed image buffer
+    return compressedImageBuffer;
   }
 }

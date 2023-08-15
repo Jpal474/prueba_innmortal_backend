@@ -2,7 +2,7 @@
 import { Departamentos } from './departamentos.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDepartamentoDto } from './dto/create-depatarmento.dto';
 
 @Injectable()
@@ -47,7 +47,6 @@ export class DepartamentosService {
         `Departamentos para el Supermercado "${id}" no han sido encontrados`,
       );
     }
-    console.log(found);
     return found;
   }catch(error){
     console.log(error)
@@ -62,7 +61,11 @@ async createDepartamento(createDepartamentoDto:CreateDepartamentoDto): Promise<D
     await this.departamentosRepository.save(departamento);
     return departamento;
   }catch(error){
-console.log(error)
+    if (error.code === '23502') {
+      throw new BadRequestException(
+        'Error: Datos Invalidos Para El Departamento',
+      );
+    }
   }
   }
 

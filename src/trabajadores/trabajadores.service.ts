@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { Trabajadores } from './trabajadores.entity';
@@ -50,16 +50,34 @@ export class TrabajadoresService {
   }
 
   async createTrabajador(createTrabajadorDto: CreateTrabajadorDto): Promise<Trabajadores> {
+    try{
     const trabajador = this.trabajadoresRepository.create(createTrabajadorDto);
     await this.trabajadoresRepository.save(trabajador);
     return trabajador;
   }
+  catch(error){
+    if (error.code === '23502') {
+      throw new BadRequestException(
+        'Error: Datos Invalidos Para El Trabajador',
+      );
+    }
+  }
+  }
 
   async updateTrabajador(id:string,updateTrabajadorDto:UpdateTrabajadorDto): Promise<Trabajadores>{
+    try{
     this.trabajador = await this.getTrabajador(id);
     this.trabajador=updateTrabajadorDto;
     await this.trabajadoresRepository.save(this.trabajador);
     return this.trabajador
+  }
+  catch(error){
+    if (error.code === '23502') {
+      throw new BadRequestException(
+        'Error: Datos Invalidos Para El Trabajador',
+      );
+    }
+  }
   }
 
   async deleteTrabajador(id:string): Promise<DeleteResult>{

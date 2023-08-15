@@ -36,6 +36,9 @@ export class User {
   @Column()
   tipo:string;
 
+  @Column({type: 'text', nullable: true})
+  imagen?:string;
+
   @OneToOne(()=>Supermercados, (supermercado)=>supermercado.encargado)
   @JoinColumn()
   supermercado?:Supermercados
