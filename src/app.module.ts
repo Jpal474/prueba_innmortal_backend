@@ -6,6 +6,7 @@ import { SupermercadosModule } from './supermercados/supermercados/supermercados
 import { TrabajadoresModule } from './trabajadores/trabajadores.module';
 import { DepartamentosModule } from './departamentos/departamentos.module';
 import { AuthModule } from './auth/auth.module';
+import { MailerService } from './mail/mailer/mailer.service';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -25,6 +26,6 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, MailerService],
 })
 export class AppModule {}

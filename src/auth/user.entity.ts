@@ -36,6 +36,9 @@ export class User {
   @Column()
   tipo:string;
 
+  @Column({default:false})
+  verificado?:boolean;
+
   @Column({type: 'text', nullable: true})
   imagen?:string;
 

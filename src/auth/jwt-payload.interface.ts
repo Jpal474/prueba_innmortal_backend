@@ -3,4 +3,5 @@ export interface JwtPayload {
   id:string;
   correo: string;
   tipo:string;
+  verificado:boolean;
   }

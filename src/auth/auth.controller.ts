@@ -13,9 +13,16 @@ import { User } from './user.entity';
 import { CreateEncargadoDto } from './dto/create-encargado.dto';
 import { UpdateEncargadoDto } from './dto/update-encargado.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { MailerService } from 'src/mail/mailer/mailer.service';
+import { MailCredentialsDto } from './dto/mail-credentials.dto';
+import { VerificacionCredentialsDto } from './dto/verificacion.credentials.dto';
 @Controller('auth')
 export class AuthController {
-  constructor(private userService: AuthService) {}
+  randomNumbers: string;
+  constructor(
+    private userService: AuthService,
+    private mailerService: MailerService,
+  ) {}
 
   @Get()
   getEncargados(): Promise<User[]> {
@@ -27,6 +34,49 @@ export class AuthController {
     @Body() authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ accessToken: string }> {
     return this.userService.signIn(authCredentialsDto);
+  }
+
+  @Post('send')
+  async sendMail(
+    @Body() mailCredentialsDto: MailCredentialsDto,
+  ): Promise<string> {
+    let numeros = '';
+    for (let i = 0; i < 6; i++) {
+      const randomNumber = Math.floor(Math.random() * 10); // Genera números entre 0 y 9
+      numeros += randomNumber;
+    }
+    this.randomNumbers = numeros;
+    console.log(`numeros ${this.randomNumbers}`);
+    try {
+      const htmlContent = `
+      <h1>Gracias Por Tu Registro</h1>
+      <p>Tu código de verificación es el siguiente:</p>
+      <h3>${this.randomNumbers}</h3>
+    `;
+      await this.mailerService.sendMail(
+        mailCredentialsDto.destinatario,
+        'Verificación',
+        htmlContent,
+      );
+      return 'Correo enviado exitosamente';
+    } catch (error) {
+      return 'Error al enviar el correo';
+    }
+  }
+
+  @Post('verificar/:id')
+  verificarUsuario(
+    @Param('id') id: string,
+    @Body() verificacionCredentialsDto: VerificacionCredentialsDto,
+  ): Promise<boolean> {
+    console.log(id);
+    console.log(verificacionCredentialsDto.codigo);
+    console.log(this.randomNumbers);
+    return this.userService.verificarUsuario(
+      id,
+      verificacionCredentialsDto.codigo,
+      this.randomNumbers,
+    );
   }
 
   @Get('/:id')

@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
-import { DeleteResult, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { AuthCredentialsDto } from './dto/auth-credential.dto';
 import * as bcrypt from 'bcrypt';
@@ -44,8 +44,8 @@ export class AuthService {
     console.log(correo);
     const user = await this.userRepository.findOneBy({ correo: correo });
     if (user && (await bcrypt.compare(contraseña, user.contraseña))) {
-      const { id, tipo } = user;
-      const payload: JwtPayload = { id, correo, tipo };
+      const { id, tipo, verificado } = user;
+      const payload: JwtPayload = { id, correo, tipo, verificado };
       const accessToken: string = await this.jwtService.sign(payload);
       return { accessToken };
     } else {
@@ -141,6 +141,23 @@ export class AuthService {
     }
     await this.userRepository.save(this.encargado);
     return this.encargado;
+  }
+
+  async verificarUsuario(
+    id: string,
+    codigoEnviado: string,
+    codigoGenerado: string,
+  ): Promise<boolean> {
+    const usuario = await this.getEncargadoById(id);
+    console.log(`Codigo Enviado ${codigoEnviado}`);
+    console.log(`Codigo Generado ${codigoGenerado}`);
+    if (codigoEnviado == codigoGenerado) {
+      usuario.verificado = true;
+      await this.userRepository.save(usuario);
+      return true;
+    } else {
+      console.log('No coinciden !');
+    }
   }
 
   async compressImage(
