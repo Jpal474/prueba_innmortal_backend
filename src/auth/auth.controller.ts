@@ -16,7 +16,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { MailerService } from 'src/mail/mailer/mailer.service';
 import { MailCredentialsDto } from './dto/mail-credentials.dto';
 import { VerificacionCredentialsDto } from './dto/verificacion.credentials.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 @Controller('auth')
+@ApiTags('Usuarios')
 export class AuthController {
   randomNumbers: string;
   constructor(
@@ -25,11 +27,25 @@ export class AuthController {
   ) {}
 
   @Get()
+  @ApiOperation({ summary: 'Obtener lista de Usuarios' })
+  @ApiResponse({
+    status: 200,
+    description: 'Regresa una lista con todos los usuarios registrados',
+    isArray: true,
+    type: User,
+  })
   getEncargados(): Promise<User[]> {
     return this.userService.getEncargados('encargado');
   }
 
   @Post('/signin')
+  @ApiOperation({ summary: 'Inicio de Sesión' })
+  @ApiResponse({
+    status: 200,
+    description: 'Regresa un token de autorización',
+    isArray: false,
+    type: String,
+  })
   signIn(
     @Body() authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ accessToken: string }> {
@@ -37,6 +53,13 @@ export class AuthController {
   }
 
   @Post('send')
+  @ApiOperation({ summary: 'Envio de correo con código de verificación' })
+  @ApiResponse({
+    status: 200,
+    description: 'Regresa un mensaje de éxito si se ha enviado el email',
+    isArray: false,
+    type: String,
+  })
   async sendMail(
     @Body() mailCredentialsDto: MailCredentialsDto,
   ): Promise<string> {
@@ -65,6 +88,13 @@ export class AuthController {
   }
 
   @Post('verificar/:id')
+  @ApiOperation({ summary: 'Verificar al usuario' })
+  @ApiResponse({
+    status: 200,
+    description: 'Regresa true si se ha podido verificar al usuario',
+    isArray: false,
+    type: Boolean,
+  })
   verificarUsuario(
     @Param('id') id: string,
     @Body() verificacionCredentialsDto: VerificacionCredentialsDto,
@@ -80,16 +110,38 @@ export class AuthController {
   }
 
   @Get('/:id')
+  @ApiOperation({ summary: 'Obtener Usuario por ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Regresa un objeto con los datos del usuario encontrado',
+    isArray: false,
+    type: User,
+  })
   getEncargadoById(@Param('id') id: string): Promise<User> {
     return this.userService.getEncargadoById(id);
   }
 
   @Get('encargado/:id')
+  @ApiOperation({ summary: 'Obtener Encargado por el ID del Supermercado' })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Regresa un objeto con los datos del encargado encontrado a partir del ID del Supermercado',
+    isArray: false,
+    type: User,
+  })
   getEncargadoBySuperId(@Param('id') id: string): Promise<User> {
     return this.userService.getEncargadoBySuperId(id);
   }
 
   @Post()
+  @ApiOperation({ summary: 'Crear Encargado' })
+  @ApiResponse({
+    status: 200,
+    description: 'Regresa un objeto con los datos del usuario creado',
+    isArray: false,
+    type: User,
+  })
   createEncargado(
     @Body() createEncargadoDto: CreateEncargadoDto,
   ): Promise<User> {
@@ -97,6 +149,13 @@ export class AuthController {
   }
 
   @Patch('/:id/editar')
+  @ApiOperation({ summary: 'Actualizar Encargado' })
+  @ApiResponse({
+    status: 200,
+    description: 'Regresa un objeto con los datos del usuario actualizado',
+    isArray: false,
+    type: User,
+  })
   updateEncargado(
     @Param('id') id: string,
     @Body() updateEncargadoDto: UpdateEncargadoDto,
@@ -105,6 +164,13 @@ export class AuthController {
   }
 
   @Post('upload/:id')
+  @ApiOperation({ summary: 'Asignar foto de perfil a mi usuario' })
+  @ApiResponse({
+    status: 200,
+    description: 'Regresa un objeto con la imagen asignada al usuario',
+    isArray: false,
+    type: User,
+  })
   @UseInterceptors(FileInterceptor('file'))
   async uploadImage(
     @UploadedFile() image: Express.Multer.File,
