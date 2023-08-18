@@ -69,12 +69,12 @@ async createDepartamento(createDepartamentoDto:CreateDepartamentoDto): Promise<D
   }
   }
 
-async deleteDepartamento(id:string):Promise<DeleteResult>{
+async deleteDepartamento(id:string):Promise<boolean>{
   const result = await this.departamentosRepository.delete(id);
   if (result.affected === 0) {
     throw new NotFoundException(`Departamento con el id: "${id}" no ha sido encontrado`);
   }else{
-  return result
+  return true;
 }
 }
 

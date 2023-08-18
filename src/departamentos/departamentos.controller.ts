@@ -77,9 +77,9 @@ export class DepartamentosController {
     status: 200,
     description: 'Se ha borrado exitosamente al departamento',
     isArray: false,
-    type: DeleteResult,
+    type: Boolean,
   })
-  deleteTaskById(@Param('id') id: string): Promise<DeleteResult> {
+  deleteDepatarmentoById(@Param('id') id: string): Promise<boolean> {
     return this.departamentosService.deleteDepartamento(id);
   }
 }

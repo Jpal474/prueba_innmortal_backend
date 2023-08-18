@@ -85,8 +85,9 @@ export class TrabajadoresController {
     status: 200,
     description: 'Se ha borrado exitosamente al trabajador',
     isArray: false,
+    type: Boolean,
   })
-  deleteTrabajador(@Param('id') id: string): void {
-    this.trabajadoresService.deleteTrabajador(id);
+  deleteTrabajador(@Param('id') id: string): Promise<boolean> {
+    return this.trabajadoresService.deleteTrabajador(id);
   }
 }

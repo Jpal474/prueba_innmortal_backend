@@ -80,13 +80,13 @@ export class TrabajadoresService {
   }
   }
 
-  async deleteTrabajador(id:string): Promise<DeleteResult>{
+  async deleteTrabajador(id:string): Promise<boolean>{
     const result = await this.trabajadoresRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Trabajador with "${id}" not found`);
     }
     else{
-      return result;
+      return true;
     }
 }
 
