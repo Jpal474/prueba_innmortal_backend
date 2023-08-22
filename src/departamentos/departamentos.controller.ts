@@ -3,7 +3,13 @@ import { DepartamentosService } from './departamentos.service';
 import { Departamentos } from './departamentos.entity';
 import { CreateDepartamentoDto } from './dto/create-depatarmento.dto';
 import { DeleteResult } from 'typeorm';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('departamentos')
 @ApiTags('Departamentos')
@@ -12,6 +18,7 @@ export class DepartamentosController {
 
   @Get('departamento/:id')
   @ApiOperation({ summary: 'Obtener departamento a partir de su ID' })
+  @ApiParam({ name: 'id', description: 'ID del Departamento' })
   @ApiResponse({
     status: 200,
     description:
@@ -25,6 +32,7 @@ export class DepartamentosController {
 
   @Get('/:nombre')
   @ApiOperation({ summary: 'Obtener departamento a partir de su nombre' })
+  @ApiParam({ name: 'nombre', description: 'Nombre del Departamento' })
   @ApiResponse({
     status: 200,
     description:
@@ -40,6 +48,7 @@ export class DepartamentosController {
   @ApiOperation({
     summary: 'Obtener lista de Departamentos a partir del ID del Supermercado',
   })
+  @ApiParam({ name: 'id', description: 'ID del Supermercado' })
   @ApiResponse({
     status: 200,
     description:
@@ -53,6 +62,10 @@ export class DepartamentosController {
 
   @Post()
   @ApiOperation({ summary: 'Crear Departamento' })
+  @ApiBody({
+    description: 'Datos del Departamento',
+    type: CreateDepartamentoDto,
+  })
   @ApiResponse({
     status: 200,
     description: 'Regresa una objeto con los datos del departamento creado',
@@ -73,6 +86,7 @@ export class DepartamentosController {
 
   @Delete('/:id')
   @ApiOperation({ summary: 'Borrar Departamento' })
+  @ApiParam({ name: 'id', description: 'ID del Departamento' })
   @ApiResponse({
     status: 200,
     description: 'Se ha borrado exitosamente al departamento',

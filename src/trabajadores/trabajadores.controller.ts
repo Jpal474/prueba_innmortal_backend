@@ -11,7 +11,13 @@ import { TrabajadoresService } from './trabajadores.service';
 import { Trabajadores } from './trabajadores.entity';
 import { CreateTrabajadorDto } from './dto/create-trabajador.dto';
 import { UpdateTrabajadorDto } from './dto/update-trabajador.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('trabajadores')
 @ApiTags('Trabajadores')
@@ -20,6 +26,7 @@ export class TrabajadoresController {
 
   @Get('/:id')
   @ApiOperation({ summary: 'Obtener Trabajadores a partir de un Departamento' })
+  @ApiParam({ name: 'id', description: 'ID del Departamento' })
   @ApiResponse({
     status: 200,
     description:
@@ -35,6 +42,7 @@ export class TrabajadoresController {
 
   @Get('trabajador/:id')
   @ApiOperation({ summary: 'Obtener Trabajador a partir de su ID' })
+  @ApiParam({ name: 'id', description: 'ID del Trabajador' })
   @ApiResponse({
     status: 200,
     description: 'Se obtiene un objeto con los datos del trabajador encontrado',
@@ -45,13 +53,9 @@ export class TrabajadoresController {
     return this.trabajadoresService.getTrabajador(id);
   }
 
-  // @Get('supermercado/:id')
-  // getSupermercado(@Param('id') id: string): Promise<Trabajadores[]> {
-  //   return this.trabajadoresService.getTrabajadorBySupermercado(id);
-  // }
-
   @Post()
   @ApiOperation({ summary: 'Crear Trabajador' })
+  @ApiBody({ description: 'Datos del Trabajador', type: CreateTrabajadorDto })
   @ApiResponse({
     status: 200,
     description: 'Regresa un objeto con los datos del trabajador creado',
@@ -66,6 +70,7 @@ export class TrabajadoresController {
 
   @Patch('/:id/editar')
   @ApiOperation({ summary: 'Editar Trabajador' })
+  @ApiParam({ name: 'id', description: 'ID del Trabajador' })
   @ApiResponse({
     status: 200,
     description: 'Regresa un objeto con los datos del trabajador actualizado',
@@ -81,6 +86,7 @@ export class TrabajadoresController {
 
   @Delete('/:id')
   @ApiOperation({ summary: 'Borrar Trabajador' })
+  @ApiParam({ name: 'id', description: 'ID del Trabajador' })
   @ApiResponse({
     status: 200,
     description: 'Se ha borrado exitosamente al trabajador',

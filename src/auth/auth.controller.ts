@@ -16,7 +16,13 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { MailerService } from 'src/mail/mailer/mailer.service';
 import { MailCredentialsDto } from './dto/mail-credentials.dto';
 import { VerificacionCredentialsDto } from './dto/verificacion.credentials.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 @Controller('auth')
 @ApiTags('Usuarios')
 export class AuthController {
@@ -40,6 +46,10 @@ export class AuthController {
 
   @Post('/signin')
   @ApiOperation({ summary: 'Inicio de Sesión' })
+  @ApiBody({
+    description: 'Datos para autenticación del usuario',
+    type: AuthCredentialsDto,
+  })
   @ApiResponse({
     status: 200,
     description: 'Regresa un token de autorización',
@@ -54,6 +64,7 @@ export class AuthController {
 
   @Post('send')
   @ApiOperation({ summary: 'Envio de correo con código de verificación' })
+  @ApiBody({ description: 'Destinatario del Correo', type: MailCredentialsDto })
   @ApiResponse({
     status: 200,
     description: 'Regresa un mensaje de éxito si se ha enviado el email',
@@ -89,6 +100,11 @@ export class AuthController {
 
   @Post('verificar/:id')
   @ApiOperation({ summary: 'Verificar al usuario' })
+  @ApiParam({ name: 'id', description: 'ID del Usuario' })
+  @ApiBody({
+    description: 'Código de Verificación Para el Usuario',
+    type: VerificacionCredentialsDto,
+  })
   @ApiResponse({
     status: 200,
     description: 'Regresa true si se ha podido verificar al usuario',
@@ -111,6 +127,7 @@ export class AuthController {
 
   @Get('/:id')
   @ApiOperation({ summary: 'Obtener Usuario por ID' })
+  @ApiParam({ name: 'id', description: 'ID del Usuario' })
   @ApiResponse({
     status: 200,
     description: 'Regresa un objeto con los datos del usuario encontrado',
@@ -123,6 +140,7 @@ export class AuthController {
 
   @Get('encargado/:id')
   @ApiOperation({ summary: 'Obtener Encargado por el ID del Supermercado' })
+  @ApiParam({ name: 'id', description: 'ID del Supermercado' })
   @ApiResponse({
     status: 200,
     description:
@@ -136,6 +154,7 @@ export class AuthController {
 
   @Post()
   @ApiOperation({ summary: 'Crear Encargado' })
+  @ApiBody({ description: 'Datos del Encargado', type: CreateEncargadoDto })
   @ApiResponse({
     status: 200,
     description: 'Regresa un objeto con los datos del usuario creado',
@@ -150,6 +169,11 @@ export class AuthController {
 
   @Patch('/:id/editar')
   @ApiOperation({ summary: 'Actualizar Encargado' })
+  @ApiParam({ name: 'id', description: 'ID del Encargado' })
+  @ApiBody({
+    description: 'Datos Actualizados del Encargado',
+    type: UpdateEncargadoDto,
+  })
   @ApiResponse({
     status: 200,
     description: 'Regresa un objeto con los datos del usuario actualizado',
@@ -165,6 +189,7 @@ export class AuthController {
 
   @Post('upload/:id')
   @ApiOperation({ summary: 'Asignar foto de perfil a mi usuario' })
+  @ApiParam({ name: 'id', description: 'ID del Usuario' })
   @ApiResponse({
     status: 200,
     description: 'Regresa un objeto con la imagen asignada al usuario',

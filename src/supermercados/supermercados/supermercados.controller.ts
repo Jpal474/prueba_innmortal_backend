@@ -5,7 +5,13 @@ import { CreateSupermercadoDto } from './dto/createSupermercado.dto';
 import { GetUser } from 'src/auth/get-usuario.decorator';
 import { User } from 'src/auth/user.entity';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('supermercados')
 @ApiTags('Supermercados')
@@ -26,6 +32,7 @@ export class SupermercadosController {
 
   @Get('/:id')
   @ApiOperation({ summary: 'Obtener Supermercado por ID' })
+  @ApiParam({ name: 'id', description: 'ID del Supermercado' })
   @ApiResponse({
     status: 200,
     description: 'Obtengo un objeto con los datos del Supermercado encontrado',
@@ -38,6 +45,10 @@ export class SupermercadosController {
 
   @Post()
   @ApiOperation({ summary: 'Crear Supermercado' })
+  @ApiBody({
+    description: 'Datos del Supermercado',
+    type: CreateSupermercadoDto,
+  })
   @ApiResponse({
     status: 200,
     description: 'Obtengo un objeto con los datos del Supermercado creado',
@@ -55,12 +66,4 @@ export class SupermercadosController {
       user,
     );
   }
-
-  //   @Patch('/:id/editar')
-  //   updateSupermercado(
-  //     @Param('id') id: string,
-  //     @Body() updateEncargadoDto: CreateSupermercadoDto,
-  //   ): Promise<Supermercados> {
-  //     return this.supermercadosService.updateSupermercado(id, updateEncargadoDto);
-  //   }
 }
