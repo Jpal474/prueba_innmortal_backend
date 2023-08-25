@@ -22,8 +22,8 @@ export class User {
   apellido_paterno: string;
 
   @Column()
-  @ApiProperty()
-  apellido_materno: string;
+  @ApiProperty({nullable:true, default:''})
+  apellido_materno?: string;
 
   @Column()
   @ApiProperty()

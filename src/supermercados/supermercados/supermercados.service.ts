@@ -12,7 +12,7 @@ export class SupermercadosService {
   supermercado:Supermercados={
    nombre:'',
    calle:'',
-   numero:0,
+   numero:'',
    colonia:'',
    estado:'',
    ciudad:'',

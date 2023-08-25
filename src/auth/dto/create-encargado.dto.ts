@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 import { EncargadoGenero } from '../encargado-models/encargado-genero-enum';
 import { ApiProperty } from '@nestjs/swagger';
 export class CreateEncargadoDto {
@@ -11,7 +11,7 @@ export class CreateEncargadoDto {
   @ApiProperty()
   apellido_paterno: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
   apellido_materno: string;
 

@@ -22,7 +22,7 @@ export class Supermercados {
 
   @Column()
   @ApiProperty()
-  numero: number;
+  numero: string;
 
   @Column()
   @ApiProperty()

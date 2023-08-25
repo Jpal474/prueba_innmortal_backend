@@ -6,6 +6,7 @@ import { GetUser } from 'src/auth/get-usuario.decorator';
 import { User } from 'src/auth/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -15,6 +16,7 @@ import {
 
 @Controller('supermercados')
 @ApiTags('Supermercados')
+@ApiBearerAuth()
 @UseGuards(AuthGuard())
 export class SupermercadosController {
   constructor(private supermercadosService: SupermercadosService) {}

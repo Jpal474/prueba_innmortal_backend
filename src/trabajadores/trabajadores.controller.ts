@@ -6,21 +6,26 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { TrabajadoresService } from './trabajadores.service';
 import { Trabajadores } from './trabajadores.entity';
 import { CreateTrabajadorDto } from './dto/create-trabajador.dto';
 import { UpdateTrabajadorDto } from './dto/update-trabajador.dto';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('trabajadores')
 @ApiTags('Trabajadores')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
 export class TrabajadoresController {
   constructor(private trabajadoresService: TrabajadoresService) {}
 

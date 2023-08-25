@@ -1,18 +1,29 @@
-import { Body, Controller, Post, Get, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { DepartamentosService } from './departamentos.service';
 import { Departamentos } from './departamentos.entity';
 import { CreateDepartamentoDto } from './dto/create-depatarmento.dto';
-import { DeleteResult } from 'typeorm';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('departamentos')
 @ApiTags('Departamentos')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
 export class DepartamentosController {
   constructor(private departamentosService: DepartamentosService) {}
 
@@ -30,20 +41,6 @@ export class DepartamentosController {
     return this.departamentosService.getDepartamentoById(id);
   }
 
-  @Get('/:nombre')
-  @ApiOperation({ summary: 'Obtener departamento a partir de su nombre' })
-  @ApiParam({ name: 'nombre', description: 'Nombre del Departamento' })
-  @ApiResponse({
-    status: 200,
-    description:
-      'Regresa un objeto con la información del departamento encontrado',
-    isArray: false,
-    type: Departamentos,
-  })
-  getDepartamento(@Param('nombre') nombre: string): Promise<Departamentos> {
-    return this.departamentosService.getDepartamentoByName(nombre);
-  }
-
   @Get('search/:id')
   @ApiOperation({
     summary: 'Obtener lista de Departamentos a partir del ID del Supermercado',
@@ -57,7 +54,26 @@ export class DepartamentosController {
     type: Departamentos,
   })
   getDepartamentosBySuperId(@Param('id') id: string): Promise<Departamentos[]> {
+    console.log('entra a controller');
     return this.departamentosService.getDepartamentosBySuperId(id);
+  }
+
+  @Get('/:nombre/:idsuper')
+  @ApiOperation({ summary: 'Obtener departamento a partir de su nombre' })
+  @ApiParam({ name: 'nombre', description: 'Nombre del Departamento' })
+  @ApiParam({ name: 'idsuper', description: 'ID del Supermercado' })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Regresa un objeto con la información del departamento encontrado',
+    isArray: false,
+    type: Departamentos,
+  })
+  getDepartamento(
+    @Param('nombre') nombre: string,
+    @Param('idsuper') idsuper: string,
+  ): Promise<Departamentos> {
+    return this.departamentosService.getDepartamentoByName(nombre, idsuper);
   }
 
   @Post()

@@ -4,6 +4,7 @@ import {
   Param,
   Patch,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthCredentialsDto } from './dto/auth-credential.dto';
@@ -17,12 +18,14 @@ import { MailerService } from 'src/mail/mailer/mailer.service';
 import { MailCredentialsDto } from './dto/mail-credentials.dto';
 import { VerificacionCredentialsDto } from './dto/verificacion.credentials.dto';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 @Controller('auth')
 @ApiTags('Usuarios')
 export class AuthController {
@@ -31,18 +34,6 @@ export class AuthController {
     private userService: AuthService,
     private mailerService: MailerService,
   ) {}
-
-  @Get()
-  @ApiOperation({ summary: 'Obtener lista de Usuarios' })
-  @ApiResponse({
-    status: 200,
-    description: 'Regresa una lista con todos los usuarios registrados',
-    isArray: true,
-    type: User,
-  })
-  getEncargados(): Promise<User[]> {
-    return this.userService.getEncargados('encargado');
-  }
 
   @Post('/signin')
   @ApiOperation({ summary: 'Inicio de Sesión' })
@@ -62,7 +53,23 @@ export class AuthController {
     return this.userService.signIn(authCredentialsDto);
   }
 
+  @Get()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Obtener lista de Usuarios' })
+  @ApiResponse({
+    status: 200,
+    description: 'Regresa una lista con todos los usuarios registrados',
+    isArray: true,
+    type: User,
+  })
+  getEncargados(): Promise<User[]> {
+    return this.userService.getEncargados('encargado');
+  }
+
   @Post('send')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Envio de correo con código de verificación' })
   @ApiBody({ description: 'Destinatario del Correo', type: MailCredentialsDto })
   @ApiResponse({
@@ -99,6 +106,8 @@ export class AuthController {
   }
 
   @Post('verificar/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Verificar al usuario' })
   @ApiParam({ name: 'id', description: 'ID del Usuario' })
   @ApiBody({
@@ -126,6 +135,8 @@ export class AuthController {
   }
 
   @Get('/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Obtener Usuario por ID' })
   @ApiParam({ name: 'id', description: 'ID del Usuario' })
   @ApiResponse({
@@ -139,6 +150,8 @@ export class AuthController {
   }
 
   @Get('encargado/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Obtener Encargado por el ID del Supermercado' })
   @ApiParam({ name: 'id', description: 'ID del Supermercado' })
   @ApiResponse({
@@ -153,6 +166,8 @@ export class AuthController {
   }
 
   @Post()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Crear Encargado' })
   @ApiBody({ description: 'Datos del Encargado', type: CreateEncargadoDto })
   @ApiResponse({
@@ -168,6 +183,8 @@ export class AuthController {
   }
 
   @Patch('/:id/editar')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Actualizar Encargado' })
   @ApiParam({ name: 'id', description: 'ID del Encargado' })
   @ApiBody({
@@ -188,6 +205,8 @@ export class AuthController {
   }
 
   @Post('upload/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Asignar foto de perfil a mi usuario' })
   @ApiParam({ name: 'id', description: 'ID del Usuario' })
   @ApiResponse({

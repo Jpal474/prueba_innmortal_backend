@@ -121,26 +121,34 @@ export class AuthService {
     id: string,
     updateEncargadoDto: UpdateEncargadoDto,
   ): Promise<User> {
-    this.encargado = await this.getEncargadoById(id);
-    this.encargado.nombre = updateEncargadoDto.nombre;
-    this.encargado.apellido_paterno = updateEncargadoDto.apellido_paterno;
-    this.encargado.apellido_materno = updateEncargadoDto.apellido_materno;
-    this.encargado.correo = updateEncargadoDto.correo;
-    this.encargado.fecha_nacimiento = updateEncargadoDto.fecha_nacimiento;
-    this.encargado.genero = updateEncargadoDto.genero;
-    this.encargado.telefono = updateEncargadoDto.telefono;
-    this.encargado.tipo = 'encargado';
-    if (updateEncargadoDto.contraseña.length !== 0) {
-      const salt = await bcrypt.genSalt();
-      const hashedPassword = await bcrypt.hash(
-        updateEncargadoDto.contraseña,
-        salt,
-      );
-      this.encargado.contraseña = hashedPassword;
-      console.log(`Hashed Pass ${hashedPassword}`);
+    try {
+      this.encargado = await this.getEncargadoById(id);
+      this.encargado.nombre = updateEncargadoDto.nombre;
+      this.encargado.apellido_paterno = updateEncargadoDto.apellido_paterno;
+      this.encargado.apellido_materno = updateEncargadoDto.apellido_materno;
+      this.encargado.correo = updateEncargadoDto.correo;
+      this.encargado.fecha_nacimiento = updateEncargadoDto.fecha_nacimiento;
+      this.encargado.genero = updateEncargadoDto.genero;
+      this.encargado.telefono = updateEncargadoDto.telefono;
+      this.encargado.tipo = 'encargado';
+      if (updateEncargadoDto.contraseña.length !== 0) {
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(
+          updateEncargadoDto.contraseña,
+          salt,
+        );
+        this.encargado.contraseña = hashedPassword;
+        console.log(`Hashed Pass ${hashedPassword}`);
+      }
+      await this.userRepository.save(this.encargado);
+      return this.encargado;
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException(
+          'El correo que ha escrito ya se encuentra en uso',
+        );
+      }
     }
-    await this.userRepository.save(this.encargado);
-    return this.encargado;
   }
 
   async verificarUsuario(

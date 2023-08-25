@@ -25,18 +25,26 @@ export class DepartamentosService {
     
   }
 
-  async getDepartamentoByName(nombre:string): Promise<Departamentos> {
-    const found = await this.departamentosRepository.findOneBy({nombre:nombre});
+  async getDepartamentoByName(nombre:string, id:string): Promise<Departamentos> {
+    const found = await this.departamentosRepository.find({
+      relations:['supermercado'],
+      where:{
+        nombre:nombre,
+        supermercado:{id: id }
+      }
+    });
     if (!found ) {
       throw new NotFoundException(
         `Departamento con el Nombre "${nombre}" no ha sido encontrado`,
       );
     }
-    return found;
+    return found[0];
     
   }
 
   async getDepartamentosBySuperId(id:string): Promise<Departamentos[]> {
+    console.log('Id', id);
+    
     try{
       const found = await this.departamentosRepository.find({
       relations: ['supermercado'],

@@ -14,7 +14,7 @@ export class CreateSupermercadoDto {
   
     @IsNotEmpty()
     @ApiProperty()
-    numero:number;
+    numero:string;
   
     @IsNotEmpty()
     @ApiProperty()
