@@ -7,19 +7,11 @@ import { TrabajadoresModule } from './trabajadores/trabajadores.module';
 import { DepartamentosModule } from './departamentos/departamentos.module';
 import { AuthModule } from './auth/auth.module';
 import { MailerService } from './mail/mailer/mailer.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { typeOrmConfigAsync } from './config/typeorm.config';
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'prueba',
-      autoLoadEntities: true,
-      synchronize: true,
-      entities: ['**/src/entity/*{.ts,.js}'],
-    }),
+    TypeOrmModule.forRootAsync(typeOrmConfigAsync),
     SupermercadosModule,
     TrabajadoresModule,
     DepartamentosModule,

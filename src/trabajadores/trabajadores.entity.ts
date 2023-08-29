@@ -8,7 +8,7 @@ import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class Trabajadores {
-  @PrimaryColumn()
+  @PrimaryColumn({unique:true})
   @ApiProperty()
   id: string;
 

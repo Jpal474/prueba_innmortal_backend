@@ -55,15 +55,19 @@ export class AuthService {
     }
   }
   async getEncargados(tipo: string): Promise<User[]> {
-    const encargados = this.userRepository.find({
-      relations: ['supermercado'],
-      where: { tipo: tipo },
-    });
-    if ((await encargados).length === 0) {
-      throw new NotFoundException(`No Hay Encargados Para Mostrar`);
-    }
+    try {
+      const encargados = this.userRepository.find({
+        relations: ['supermercado'],
+        where: { tipo: tipo },
+      });
+      if ((await encargados).length === 0) {
+        throw new NotFoundException(`No Hay Encargados Para Mostrar`);
+      }
 
-    return encargados;
+      return encargados;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async getEncargadoById(id: string): Promise<User> {

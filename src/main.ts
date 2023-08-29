@@ -3,8 +3,17 @@ import { AppModule } from './app.module';
 import { TransformInterceptor } from './transform.interceptor';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
+const CORS_OPTIONS = {
+  origin: '*',
+  methods: 'GET,HEAD,PUT,POST,DELETE',
+  allowedHeaders:
+    'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+};
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: CORS_OPTIONS });
   app.enableCors();
   app.useGlobalInterceptors(new TransformInterceptor());
   // Configuración de Swagger
@@ -16,6 +25,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();

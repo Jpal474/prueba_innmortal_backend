@@ -28,8 +28,8 @@ export class SupermercadosController {
     isArray: true,
     type: Supermercados,
   })
-  getSupermercados(): Promise<Supermercados[]> {
-    return this.supermercadosService.getSupermercados();
+  async etSupermercados(): Promise<Supermercados[]> {
+    return await this.supermercadosService.getSupermercados();
   }
 
   @Get('/:id')

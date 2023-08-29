@@ -27,20 +27,30 @@ export class SupermercadosService {
   ) {}
 
   async getSupermercados(): Promise<Supermercados[]> {
-    const query=this.supermercadosRepository.createQueryBuilder('supermercados');
+    try{
+    const query= await this.supermercadosRepository.createQueryBuilder('supermercados');
     const supermercados = await query.getMany();
     if(!supermercados){
       throw new NotFoundException(`No Se Han Encontrado Supermercados`)
     }
     return supermercados;
   }
+  catch(error){
+       console.log(error)
+  }
+  }
 
   async getSupermercado(id:string):Promise<Supermercados>{
+    try{
     const found = await this.supermercadosRepository.findOneBy({id:id})
     if(!found){
       throw new NotFoundException(`El Supermercado con el ID ${id} no ha sido encontrado`)
     }
     return found;
+  }
+  catch(error){
+    console.log(error)
+  }
   
   }
 
